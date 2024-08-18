@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 public class Test {
+    public static final String PARA_ILLEGAL = "arguments illegal";
+
     public static void main(String[] args) {
         String inputLine;
         String[] paras;
@@ -46,6 +48,79 @@ public class Test {
                 else
                     System.out.println("command '" + paras[0] + "' not found");
             }
+
+
+
+
+            case "addCourse" -> {
+                Course.addCourse(paras);
+            }
+
+            case "removeCourse" -> {
+                Course.removeCourse(paras);
+            }
+
+            case "listCourse" -> {
+                Course.listCourse(paras);
+            }
+
+            case "selectCourse" -> {
+                Course.selectCourse(paras);
+            }
+
+            case "addAdmin" -> {
+                Course.addAdmin(paras);
+            }
+
+            case "removeAdmin" -> {
+                Course.removeAdmin(paras);
+            }
+
+            case "listAdmin" -> {
+                Course.listAdmin(paras);
+            }
+
+            case "changeRole" -> {
+                Course.changeRole(paras);
+            }
+
+            case "addWare" -> {
+                Course.addWare(paras);
+            }
+
+            case "removeWare" -> {
+                Course.removeWare(paras);
+            }
+
+            case "listWare" -> {
+                Course.listWare(paras);
+            }
+
+            case "addTask" -> {
+                Course.addTask(paras);
+            }
+
+            case "removeTask" -> {
+                Course.removeTask(paras);
+            }
+
+            case "listTask" -> {
+                Course.listTask(paras);
+            }
+
+            case "addStudent" -> {
+                Course.addStudent(paras);
+            }
+
+            case "removeStudent" -> {
+                Course.removeStudent(paras);
+            }
+
+            case "listStudent" -> {
+                Course.listStudent(paras);
+            }
+
+
 
             default -> {
                 System.out.println("command '" + paras[0] + "' not found");

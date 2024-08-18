@@ -1,12 +1,15 @@
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class User {
-    public static final String PARA_ILLEGAL = "arguments illegal", ALREADY_LOGIN = "already logged in";
+    public static final String ALREADY_LOGIN = "already logged in";
     public static final String ID_NO_EXIST = "user id not exist", ID_ILLEGAL = "user id illegal";
+    public static final String NO_LOGIN = "not logged in";
+    public static final String RIGHT_ERROR = "permission denied";
     public static final int USER_TYPE_UNDER = 0, USER_TYPE_GRADUATE = 1, USER_TYPE_TEACHER = 2;
 
 
-    private static ArrayList<User> userArrayList = new ArrayList<>();
+    private static ArrayList<User> users = new ArrayList<>();
 
     private static User userNow = null;
 
@@ -17,6 +20,7 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+    private TreeMap<String, Course> courses = new TreeMap<>();
 
     public User(int type, String id, String firstName, String lastName, String email, String password) {
         this.type = type;
@@ -31,7 +35,7 @@ public class User {
     public static void register(String [] para) {
 
         if(para.length != 7) {
-            System.out.println(PARA_ILLEGAL);
+            System.out.println(Test.PARA_ILLEGAL);
             return;
         }
 
@@ -64,13 +68,13 @@ public class User {
 
         switch (para[1].length()) {
             case 8 -> {
-                userArrayList.add(new UnderGraduate(para[1], para[2], para[3], para[4], para[5]));
+                users.add(new UnderGraduate(para[1], para[2], para[3], para[4], para[5]));
             }
             case 9 -> {
-                userArrayList.add(new Graduate(para[1], para[2], para[3], para[4], para[5]));
+                users.add(new Graduate(para[1], para[2], para[3], para[4], para[5]));
             }
             case 5 -> {
-                userArrayList.add(new Teacher(para[1], para[2], para[3], para[4], para[5]));
+                users.add(new Teacher(para[1], para[2], para[3], para[4], para[5]));
             }
         }
         System.out.println("register success");
@@ -84,7 +88,7 @@ public class User {
 
     public static void login(String[] para) {
         if(para.length != 3) {
-            System.out.println(PARA_ILLEGAL);
+            System.out.println(Test.PARA_ILLEGAL);
             return;
         }
 
@@ -93,17 +97,12 @@ public class User {
             return;
         }
 
-        User user = null;
-        if(isIdLegal(para[1])) {
-            for(User userCheck : userArrayList) {
-                if(userCheck.id.equals(para[1])) {
-                    user = userCheck;
-                }
-            }
-        }else {
+
+        if(!isIdLegal(para[1])) {
             return;
         }
 
+        User user = findId(para[1]);
         if(user == null) {
             System.out.println(ID_NO_EXIST);
             return;
@@ -111,9 +110,12 @@ public class User {
 
         if(user.password.equals(para[2])) {
             userNow = user;
+            Course.setCoursesOfUserNow(userNow.courses);
             if(userNow.type == USER_TYPE_TEACHER) {
+                Course.setStatus(Course.STATUS_TEACHER);
                 System.out.println("Hello Professor " + userNow.lastName + "~");
             }else {
+                Course.setStatus(Course.STATUS_STUDENT);
                 System.out.println("Hello " + userNow.firstName + "~");
             }
         }else {
@@ -127,14 +129,18 @@ public class User {
 
     public static void logout(String[] para) {
         if(para.length != 1) {
-            System.out.println(PARA_ILLEGAL);
+            System.out.println(Test.PARA_ILLEGAL);
             return;
         }
 
         if(userNow == null) {
-            System.out.println("not logged in");
+            System.out.println(NO_LOGIN);
             return;
         }
+
+        Course.setCoursesOfUserNow(null);
+        Course.setStatus(Course.STATUS_UNLOGIN);
+        Course.setCourseNow(null);
 
         userNow = null;
         System.out.println("Bye~");
@@ -152,7 +158,7 @@ public class User {
         }
 
         if(para.length > 2) {
-            System.out.println(PARA_ILLEGAL);
+            System.out.println(Test.PARA_ILLEGAL);
             return;
         }
 
@@ -167,12 +173,7 @@ public class User {
                 return;
             }
 
-            User userCheck = null;
-            for(User user : userArrayList) {
-                if(user.id.equals(para[1])) {
-                    userCheck = user;
-                }
-            }
+            User userCheck = findId(para[1]);
             if(userCheck == null) {
                 System.out.println(ID_NO_EXIST);
                 return;
@@ -183,7 +184,7 @@ public class User {
         }else {
             //student
             if(para.length > 1) {
-                System.out.println("permission denied");
+                System.out.println(RIGHT_ERROR);
                 return;
             }
 
@@ -192,9 +193,30 @@ public class User {
     }
 
 
+    static public boolean isUserNowTeacher() {
+        if(userNow != null && userNow.type == USER_TYPE_TEACHER) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    static public User findId(String id) {
+        for(User user : users) {
+            if(user.id.equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
 
 
-    private static boolean isIdLegal(String id) {
+
+
+
+
+
+    public static boolean isIdLegal(String id) {
         int year, college, classNum, number;
         boolean isLegal = false;
 
@@ -240,7 +262,7 @@ public class User {
     }
 
     private static boolean isIdDuplicate(String id) {
-        for(User user : userArrayList) {
+        for(User user : users) {
             if(user.id.equals(id)) {
                 System.out.println("user id duplication");
                 return true;
@@ -283,5 +305,40 @@ public class User {
                 "\nID: " + id +
                 "\nType: " + ((type == USER_TYPE_TEACHER) ? "Professor" : "Student") +
                 "\nEmail: " + email);
+    }
+
+    public static User getUserNow() {
+        if(userNow == null) {
+            System.out.println(NO_LOGIN);
+        }
+        return userNow;
+    }
+
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public TreeMap<String, Course> getCourses() {
+        return courses;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

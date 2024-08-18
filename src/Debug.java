@@ -27,6 +27,7 @@ public class Debug {
             case 1 -> registerTest0();
             case 2 -> logTest0();
             case 3 -> printInfoTest0();
+            case 4 -> courseTest();
         }
     }
 
@@ -36,7 +37,7 @@ public class Debug {
 
 
         paras = new String[]{"registeer", "20374249", "Yizhou", "Liu", "20374249@buaa.edu.cn", "b20011114"};
-        testComm(paras, "wrong command", "arguments illegal");
+        testComm(paras, "wrong command", "command 'registeer' not found");
 
         paras = new String[]{"register", "20374249", "Yizhou", "Liu", "20374249@buaa.edu.cn", "b20011114"};
         testComm(paras, "less arguments", "arguments illegal");
@@ -101,7 +102,7 @@ public class Debug {
     }
 
     public static void printInfoTest0() {
-        System.out.println("---------- register test 0 start ----------");
+        System.out.println("---------- printInfo test 0 start ----------");
         String[] paras;
 
         paras = new String[]{"logout"};
@@ -135,6 +136,109 @@ public class Debug {
         testComm(paras, "", "");
 
         paras = new String[]{"printInfo"};
+        testComm(paras, "", "");
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+    }
+
+    public static void courseTest() {
+        System.out.println("---------- courseTest test 0 start ----------");
+        String[] paras;
+
+        paras = new String[]{"register", "20373252", "Yixiao", "Li", "20373252@buaa.edu.cn", "x12345678", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"register", "19376054", "Hongxi", "Zhou", "19376054@buaa.edu.cn", "x12345678", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"register", "10001","Xueping", "Shen", "10001@buaa.edu.cn", "x12345678", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"login", "10001", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addCourse", "C2101", "oop_autumn"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listCourse"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"selectCourse", "C2101"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addAdmin", "20373252"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listAdmin"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addTask", "T210101", "autumn_task1.txt", "2020-02-29-00:00:00", "2024-02-29-00:00:00"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listTask"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addWare", "W210101", "autumn_ware1.txt"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listWare"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addStudent", "19376054"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listStudent"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"logout"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"login", "20373252", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"changeRole"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"selectCourse", "C2101"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listAdmin"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listTask"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listWare"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listStudent"};
+        testComm(paras, "", "");
+
+
+
+
+
+        paras = new String[]{"logout"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"login", "10001", "x12345678"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addCourse", "C2022", "nihao"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"addCourse", "C2001", "pikaqiu"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listCourse"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"removeCourse", "C2001"};
+        testComm(paras, "", "");
+
+        paras = new String[]{"listCourse"};
         testComm(paras, "", "");
 
         System.out.println();

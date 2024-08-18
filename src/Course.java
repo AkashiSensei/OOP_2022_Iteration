@@ -1,11 +1,9 @@
-import javax.sound.midi.Soundbank;
-import javax.swing.*;
 import java.io.*;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -28,6 +26,7 @@ public class Course {
     private final TreeMap<String, User> students = new TreeMap<>();
     private final TreeMap<String, Ware> wares = new TreeMap<>();
     private final TreeMap<String, Task> tasks = new TreeMap<>();
+    private final ArrayList<VirtualMachine> vms = new ArrayList<>();
 
 
 
@@ -478,7 +477,7 @@ public class Course {
     }
 
     public static void copy(String srcPath, String dstPath) throws Exception{
-        byte buffer[] = new byte[4096];
+        byte[] buffer = new byte[4096];
         int readNum;
         File dstFile = new File(dstPath);
         FileInputStream inputStream = new FileInputStream(srcPath);
@@ -649,7 +648,7 @@ public class Course {
 
         String savePath = null;
         String outputPath = null;
-        String fileId = para[1];
+        String fileId;
         boolean isAppend = false;
 
 
@@ -829,7 +828,7 @@ public class Course {
         }
     }
 
-    public static void openFile(String para[]) {
+    public static void openFile(String[] para) {
         if(para.length < 2) {
             System.out.println("please input the path to open the file");
             return;
@@ -1045,6 +1044,174 @@ public class Course {
 
 
 
+    public static void setVM(VirtualMachine vm) {
+        int vmNum;
+
+        vmNum = courseNow.vms.size();
+        courseNow.vms.add(vm);
+
+        vm.setNumInCourse(vmNum);
+        User.getUserNow().getVms().put(courseNow.id, vm);
+    }
+
+    public static void requestVM(String[] para) {
+        if(!isStudentAndSelected()) {
+            return;
+        }
+        VirtualMachine newVM;
+
+        switch (para[1]) {
+            case "Windows" -> newVM = VMWindows.getFactory().makeVM();
+            case "Linux" -> newVM = VMLinux.getFactory().makeVM();
+            case "MacOS" -> newVM = VMMacOS.getFactory().makeVM();
+            default -> {
+                System.out.println("!!!judge VM type ERROR");
+                return;
+            }
+        }
+
+        setVM(newVM);
+        System.out.println("requestVM success");
+    }
+
+    public static void startVM(String[] para) {
+        if(!isStudentAndSelected()) {
+            return;
+        }
+
+        if(!User.getUserNow().getVms().containsKey(courseNow.id)) {
+            System.out.println("no VM");
+            return;
+        }
+
+        Scanner scanner = Test.getScanner();
+        String inputLine;
+        VirtualMachine operatingVM = User.getUserNow().getVms().get(courseNow.id);
+        System.out.println("welcome to " + operatingVM.getSysType());
+
+        while(!Objects.equals(inputLine = scanner.nextLine(), "EOF")) {
+            operatingVM.getCommands().add(inputLine);
+        }
+
+        System.out.println("quit " + operatingVM.getSysType());
+    }
+
+    public static void clearVM(String[] para) {
+        if(!isTeacherAndSelected()) {
+            return;
+        }
+
+        VirtualMachine operatingVM = courseNow.vms.get(Integer.parseInt(para[1]) - 1);
+        operatingVM.clearCommands();
+
+        System.out.println("clear " + operatingVM.getSysType() + " success");
+    }
+
+    public static void logVM(String[] para) {
+        if(!isStudentAndSelected()) {
+            return;
+        }
+
+        if(!User.getUserNow().getVms().containsKey(courseNow.id)) {
+            System.out.println("no log");
+            return;
+        }
+
+        VirtualMachine operatingVM = User.getUserNow().getVms().get(courseNow.id);
+
+        if(operatingVM.getCommands().size() == 0) {
+            System.out.println("no log");
+            return;
+        }
+
+        for(String logLine : operatingVM.getCommands()) {
+            System.out.println(logLine);
+        }
+    }
+
+    public static void upLoadVM(String[] para) {
+        if(!isStudentAndSelected()) {
+            return;
+        }
+
+        if(!User.getUserNow().getVms().containsKey(courseNow.id)) {
+            System.out.println("!!!No Such VM");
+            return;
+        }
+
+        VirtualMachine savingVM = User.getUserNow().getVms().get(courseNow.id);
+
+        File dstFile = new File(para[1]);
+        if(dstFile.getParentFile() != null && !dstFile.getParentFile().exists()) {
+            dstFile.getParentFile().mkdirs();
+        }
+
+        OutputStream dstOS = null;
+        ObjectOutputStream dstOOS = null;
+        try {
+            dstOS = new FileOutputStream(dstFile);
+            dstOOS = new ObjectOutputStream(dstOS);
+
+            dstOOS.writeObject(savingVM);
+            dstOOS.flush();
+        }catch (Exception e) {
+            System.out.println(e);
+        }finally {
+            try {
+                if(dstOOS != null) {
+                    dstOOS.close();
+                }
+                if(dstOS != null) {
+                    dstOS.close();
+                }
+                System.gc();
+            }catch (Exception e) {
+                System.out.println("!!!Close Error");
+            }
+        }
+        System.out.println("uploadVM success");
+    }
+
+    public static void downloadVM(String[] para) {
+        if(!isStudentAndSelected()) {
+            return;
+        }
+
+        File srcFile = new File(para[1]);
+        VirtualMachine downloadingVM = null;
+
+        InputStream srcIS = null;
+        ObjectInputStream srcOIS = null;
+
+        try {
+            srcIS = new FileInputStream(srcFile);
+            srcOIS = new ObjectInputStream(srcIS);
+
+            downloadingVM = (VirtualMachine) srcOIS.readObject();
+        }catch (Exception e) {
+            System.out.println(e);
+        }finally {
+            try {
+                if(srcOIS != null) {
+                    srcOIS.close();
+                }
+                if(srcIS != null) {
+                    srcIS.close();
+                }
+            }catch (Exception e) {
+                System.out.println("!!!!!Close Error");
+            }
+        }
+
+        setVM(downloadingVM);
+        System.out.println("downloadVM success");
+    }
+
+
+
+
+
+
 
 
 
@@ -1132,6 +1299,19 @@ public class Course {
 
     private static boolean isAdminAndSelected() {
         if(!isLoginAndAdmin()) {
+            return false;
+        }
+
+        return isSelect();
+    }
+
+    private static boolean isStudentAndSelected() {
+        if(!isLogin()) {
+            return false;
+        }
+
+        if(status != STATUS_STUDENT) {
+            System.out.println("!!!Need Student");
             return false;
         }
 

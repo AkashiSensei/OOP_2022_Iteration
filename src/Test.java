@@ -44,18 +44,10 @@ public class Test {
                 System.exit(0);
             }
 
-            case "register" -> {
-                User.register(paras);
-            }
-            case "login" -> {
-                User.login(paras);
-            }
-            case "printInfo" -> {
-                User.printInfo(paras);
-            }
-            case "logout" -> {
-                User.logout(paras);
-            }
+            case "register" -> User.register(paras);
+            case "login" -> User.login(paras);
+            case "printInfo" -> User.printInfo(paras);
+            case "logout" -> User.logout(paras);
 
             case "debug" -> {
                 if(canDebug)
@@ -67,96 +59,63 @@ public class Test {
 
 
 
-            case "addCourse" -> {
-                Course.addCourse(paras);
-            }
+            case "addCourse" -> Course.addCourse(paras);
 
-            case "removeCourse" -> {
-                Course.removeCourse(paras);
-            }
+            case "removeCourse" -> Course.removeCourse(paras);
 
-            case "listCourse" -> {
-                Course.listCourse(paras);
-            }
+            case "listCourse" -> Course.listCourse(paras);
 
-            case "selectCourse" -> {
-                Course.selectCourse(paras);
-            }
+            case "selectCourse" -> Course.selectCourse(paras);
 
-            case "addAdmin" -> {
-                Course.addAdmin(paras);
-            }
+            case "addAdmin" -> Course.addAdmin(paras);
 
-            case "removeAdmin" -> {
-                Course.removeAdmin(paras);
-            }
+            case "removeAdmin" -> Course.removeAdmin(paras);
 
-            case "listAdmin" -> {
-                Course.listAdmin(paras);
-            }
+            case "listAdmin" -> Course.listAdmin(paras);
 
-            case "changeRole" -> {
-                Course.changeRole(paras);
-            }
+            case "changeRole" -> Course.changeRole(paras);
 
-            case "addWare" -> {
-                Course.addWare(paras);
-            }
+            case "addWare" -> Course.addWare(paras);
 
-            case "removeWare" -> {
-                Course.removeWare(paras);
-            }
+            case "removeWare" -> Course.removeWare(paras);
 
-            case "listWare" -> {
-                Course.listWare(paras);
-            }
+            case "listWare" -> Course.listWare(paras);
 
-            case "addTask" -> {
-                Course.addTask(paras);
-            }
+            case "addTask" -> Course.addTask(paras);
 
-            case "removeTask" -> {
-                Course.removeTask(paras);
-            }
+            case "removeTask" -> Course.removeTask(paras);
 
-            case "listTask" -> {
-                Course.listTask(paras);
-            }
+            case "listTask" -> Course.listTask(paras);
 
-            case "addStudent" -> {
-                Course.addStudent(paras);
-            }
+            case "addStudent" -> Course.addStudent(paras);
 
-            case "removeStudent" -> {
-                Course.removeStudent(paras);
-            }
+            case "removeStudent" -> Course.removeStudent(paras);
 
-            case "listStudent" -> {
-                Course.listStudent(paras);
-            }
+            case "listStudent" -> Course.listStudent(paras);
 
 
 
 
-            case "downloadFile" -> {
-                Course.downloadFile(paras);
-            }
+            case "downloadFile" -> Course.downloadFile(paras);
 
-            case "openFile" -> {
-                Course.openFile(paras);
-            }
+            case "openFile" -> Course.openFile(paras);
 
-            case "submitTask", "addAnswer" -> {
-                Course.submitTaskOrAnswer(paras);
-            }
+            case "submitTask", "addAnswer" -> Course.submitTaskOrAnswer(paras);
 
-            case "queryScore" -> {
-                Course.queryScore(paras);
-            }
+            case "queryScore" -> Course.queryScore(paras);
 
-            default -> {
-                System.out.println("command '" + paras[0] + "' not found");
-            }
+
+
+            case "requestVM" -> Course.requestVM(paras);
+
+            case "startVM" -> Course.startVM(paras);
+
+            case "clearVM" -> Course.clearVM(paras);
+            case "logVM" -> Course.logVM(paras);
+            case "uploadVM" -> Course.upLoadVM(paras);
+            case "downloadVM" -> Course.downloadVM(paras);
+
+            default -> System.out.println("command '" + paras[0] + "' not found");
         }
     }
 
@@ -168,9 +127,12 @@ public class Test {
 
     public static void deleteData() throws IOException {
         System.gc();
+        if(!new File("./data").exists()) {
+            return;
+        }
 
         Files.walkFileTree(Path.of("./data"),
-                new SimpleFileVisitor<Path>() {
+                new SimpleFileVisitor<>() {
                     // 先去遍历删除文件
                     @Override
                     public FileVisitResult visitFile(Path file,
@@ -179,6 +141,7 @@ public class Test {
                         //System.out.printf("文件被删除 : %s%n", file);
                         return FileVisitResult.CONTINUE;
                     }
+
                     // 再去遍历删除目录
                     @Override
                     public FileVisitResult postVisitDirectory(Path dir,

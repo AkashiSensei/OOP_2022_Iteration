@@ -22,6 +22,7 @@ public class User {
     private final String password;
     private final TreeMap<String, Course> adminCourses = new TreeMap<>();
     private final TreeMap<String, Course> learnCourses = new TreeMap<>();
+    private final TreeMap<String, VirtualMachine> vms = new TreeMap<>();
 
     public User(int type, String id, String firstName, String lastName, String email, String password) {
         this.type = type;
@@ -347,5 +348,9 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public TreeMap<String, VirtualMachine> getVms() {
+        return vms;
     }
 }

@@ -1,6 +1,3 @@
-import java.util.Scanner;
-import java.util.stream.StreamSupport;
-
 public class Debug {
 
     public static void init() {
@@ -144,6 +141,7 @@ public class Debug {
     }
 
     public static void courseTest() {
+        // can run independent
         System.out.println("---------- courseTest test 0 start ----------");
         String[] paras;
 
@@ -245,12 +243,6 @@ public class Debug {
         System.out.println();
         System.out.println();
     }
-
-
-
-
-
-
 
 
     public static void showCommand(String[] paras, String info, String except) {

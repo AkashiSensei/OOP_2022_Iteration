@@ -2,7 +2,7 @@ public class Ware extends CourseSrc{
     public static final String ID_ILLEGAL = "ware id illegal";
     public static final String NAME_ILLEGAL = "ware name illegal";
     public static final String ID_DUPLICATE = "ware id duplication";
-    public static final String ID_NO_EXIST = "ware id not exist";
+    public static final String ID_NO_EXIST = "ware not found";
 
 
     public Ware(String id, String name) {
@@ -29,6 +29,12 @@ public class Ware extends CourseSrc{
         }
         System.out.println(NAME_ILLEGAL);
         return false;
+    }
+
+
+    @Override
+    public String getSavePathAfterCourseId() {
+        return ("wares\\" + this.getId() + "_" + this.getName());
     }
 
     @Override

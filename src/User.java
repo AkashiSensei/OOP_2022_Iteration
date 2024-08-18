@@ -14,13 +14,14 @@ public class User {
     private static User userNow = null;
 
 
-    private int type;
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private TreeMap<String, Course> courses = new TreeMap<>();
+    private final int type;
+    private final String id;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final String password;
+    private final TreeMap<String, Course> adminCourses = new TreeMap<>();
+    private final TreeMap<String, Course> learnCourses = new TreeMap<>();
 
     public User(int type, String id, String firstName, String lastName, String email, String password) {
         this.type = type;
@@ -110,7 +111,8 @@ public class User {
 
         if(user.password.equals(para[2])) {
             userNow = user;
-            Course.setCoursesOfUserNow(userNow.courses);
+            Course.setAdminCoursesOfUserNow(userNow.adminCourses);
+            Course.setLearnCoursesOfUserNow(userNow.learnCourses);
             if(userNow.type == USER_TYPE_TEACHER) {
                 Course.setStatus(Course.STATUS_TEACHER);
                 System.out.println("Hello Professor " + userNow.lastName + "~");
@@ -138,7 +140,8 @@ public class User {
             return;
         }
 
-        Course.setCoursesOfUserNow(null);
+        Course.setAdminCoursesOfUserNow(null);
+        Course.setLearnCoursesOfUserNow(null);
         Course.setStatus(Course.STATUS_UNLOGIN);
         Course.setCourseNow(null);
 
@@ -326,8 +329,12 @@ public class User {
         return id;
     }
 
-    public TreeMap<String, Course> getCourses() {
-        return courses;
+    public TreeMap<String, Course> getAdminCourses() {
+        return adminCourses;
+    }
+
+    public TreeMap<String, Course> getLearnCourses() {
+        return learnCourses;
     }
 
     public String getFirstName() {

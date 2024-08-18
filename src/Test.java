@@ -1,6 +1,14 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
 
 public class Test {
+    private static final Scanner scanner = new Scanner(System.in);
     public static final String PARA_ILLEGAL = "arguments illegal";
 
     public static void main(String[] args) {
@@ -12,7 +20,6 @@ public class Test {
             debug(args);
         }
 
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             inputLine = scanner.nextLine();
             paras = inputLine.split("\\s+");
@@ -23,8 +30,16 @@ public class Test {
 
     public static void runComm(String[] paras, boolean canDebug) {
         switch (paras[0]) {
+            case "" -> {
+                //System.out.println(paras[1]);
+            }
 
             case "QUIT" -> {
+                try {
+                    deleteData();
+                } catch (IOException e) {
+                    System.out.println("delete data error" + e);
+                }
                 System.out.println("----- Good Bye! -----");
                 System.exit(0);
             }
@@ -122,6 +137,23 @@ public class Test {
 
 
 
+
+            case "downloadFile" -> {
+                Course.downloadFile(paras);
+            }
+
+            case "openFile" -> {
+                Course.openFile(paras);
+            }
+
+            case "submitTask", "addAnswer" -> {
+                Course.submitTaskOrAnswer(paras);
+            }
+
+            case "queryScore" -> {
+                Course.queryScore(paras);
+            }
+
             default -> {
                 System.out.println("command '" + paras[0] + "' not found");
             }
@@ -133,4 +165,36 @@ public class Test {
             Debug.debug(Integer.parseInt(arg));
         }
     }
+
+    public static void deleteData() throws IOException {
+        System.gc();
+
+        Files.walkFileTree(Path.of("./data"),
+                new SimpleFileVisitor<Path>() {
+                    // 先去遍历删除文件
+                    @Override
+                    public FileVisitResult visitFile(Path file,
+                                                     BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file);
+                        //System.out.printf("文件被删除 : %s%n", file);
+                        return FileVisitResult.CONTINUE;
+                    }
+                    // 再去遍历删除目录
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir,
+                                                              IOException exc) throws IOException {
+                        Files.delete(dir);
+                        //System.out.printf("文件夹被删除: %s%n", dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                }
+        );
+
+    }
+
+    public static Scanner getScanner() {
+        return scanner;
+    }
+
 }
